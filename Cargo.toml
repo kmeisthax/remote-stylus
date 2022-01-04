@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+	'core',
+	'clients/ipados',
+	'clients/windows',
+]
