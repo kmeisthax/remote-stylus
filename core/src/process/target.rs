@@ -1,16 +1,25 @@
 use crate::error::Error;
 use crate::protocol::{Message, PointerEvent};
-use laminar::{Packet, Socket, SocketEvent, ErrorKind as LaminarError};
-use crossbeam_channel::{Sender, select};
+use crossbeam_channel::{select, RecvError, Sender};
+use laminar::{Packet, Socket, SocketEvent};
 use std::thread;
 
-fn target_packet<OPEC>(msg: Result<SocketEvent, LaminarError>, v4socket_send: Sender<Packet>, v6socket_send: Sender<Packet>, mut on_pointer_event: OPEC) -> Result<(), Error> where OPEC: FnMut(PointerEvent) {
+/// Process an incoming packet in the target process.
+fn target_packet<OPEC>(
+    msg: Result<SocketEvent, RecvError>,
+    v4socket_send: &mut Sender<Packet>,
+    v6socket_send: &mut Sender<Packet>,
+    on_pointer_event: &mut OPEC,
+) -> Result<(), Error>
+where
+    OPEC: FnMut(PointerEvent),
+{
     match msg {
         Ok(SocketEvent::Packet(packet)) => {
             let socket_send = if packet.addr().is_ipv4() {
-                &mut v4socket_send
+                v4socket_send
             } else {
-                &mut v6socket_send
+                v6socket_send
             };
 
             match rmp_serde::from_read_ref(packet.payload())? {
@@ -18,9 +27,8 @@ fn target_packet<OPEC>(msg: Result<SocketEvent, LaminarError>, v4socket_send: Se
                     //Reflect TargetAcknowledgeSource
                     let response = rmp_serde::to_vec(&Message::TargetAcknowledgeSource)?;
 
-                    socket_send
-                        .send(Packet::reliable_ordered(packet.addr(), response, None)).unwrap();
-                    
+                    socket_send.send(Packet::reliable_ordered(packet.addr(), response, None))?;
+
                     Ok(())
                 }
                 Message::SourcePointerEvent(ptr_evt) => {
@@ -28,14 +36,12 @@ fn target_packet<OPEC>(msg: Result<SocketEvent, LaminarError>, v4socket_send: Se
                     on_pointer_event(ptr_evt);
                     Ok(())
                 }
-                Message::TargetAcknowledgeSource => {
-                    return Err(Error::ProtocolRole);
-                }
+                Message::TargetAcknowledgeSource => Err(Error::ProtocolRole),
             }
         }
-        
+
         Ok(_) => Ok(()), // TODO: Report connect/disconnect events
-        
+
         Err(_) => unimplemented!(), //TODO: Handle unplanned shutdown
     }
 }
@@ -76,8 +82,8 @@ where
 
     loop {
         let maybe_error = select! {
-            recv(v4socket_recv) -> msg => target_packet(msg)
-            recv(v6socket_recv) -> msg => target_packet(msg)
+            recv(v4socket_recv) -> msg => target_packet(msg, &mut v4socket_send, &mut v6socket_send, &mut on_pointer_event),
+            recv(v6socket_recv) -> msg => target_packet(msg, &mut v4socket_send, &mut v6socket_send, &mut on_pointer_event)
         };
 
         if let Err(e) = maybe_error {
