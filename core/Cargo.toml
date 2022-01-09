@@ -9,3 +9,4 @@ rmp-serde = "0.15.5"
 serde = { version = "1.0.133", features = ["derive"] }
 clap = { version = "3.0.1", features = ["derive"] }
 laminar = "0.3"
+crossbeam-channel = "0.5.2"
