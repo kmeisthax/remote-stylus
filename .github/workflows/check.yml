@@ -69,8 +69,6 @@ jobs:
     steps:
       - name: Checkout commit
         uses: actions/checkout@v2
-      - name: Install iPadOS toolchain
-        run: sudo xcode-select --install
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
