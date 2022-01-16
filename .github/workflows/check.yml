@@ -1,0 +1,39 @@
+name: check
+on: [push, pull_request]
+jobs:
+  check_all:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+        rust_toolchain: [stable]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.rust_toolchain}}
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+  
+  check_windows:
+    needs: check_all
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+        rust_toolchain: [stable]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.rust_toolchain}}
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package remotestylus-windows -- -D warnings
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package remotestylus-windows
