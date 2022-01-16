@@ -168,31 +168,45 @@ impl TargetServicer {
                 let mut first = inputs.get_mut(0).unwrap();
 
                 if p.location != self.last_mouse_position {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MOVE; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MOVE;
+                    }
                 }
 
                 if buttons_pressed.contains(MouseButtons::PRIMARY) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_LEFTDOWN;
+                    }
                 }
 
                 if buttons_released.contains(MouseButtons::PRIMARY) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_LEFTUP; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_LEFTUP;
+                    }
                 }
 
                 if buttons_pressed.contains(MouseButtons::CONTEXT) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_RIGHTDOWN;
+                    }
                 }
 
                 if buttons_released.contains(MouseButtons::CONTEXT) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_RIGHTUP; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_RIGHTUP;
+                    }
                 }
 
                 if buttons_pressed.contains(MouseButtons::SCROLL) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MIDDLEDOWN;
+                    }
                 }
 
                 if buttons_released.contains(MouseButtons::SCROLL) {
-                    unsafe { first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP; }
+                    unsafe {
+                        first.Anonymous.mi.dwFlags |= MOUSEEVENTF_MIDDLEUP;
+                    }
                 }
 
                 // Windows's X-Button support is rather odd. We cannot
@@ -207,15 +221,16 @@ impl TargetServicer {
                 {
                     unsafe {
                         first.Anonymous.mi.dwFlags |= MOUSEEVENTF_XDOWN;
-                        first.Anonymous.mi.mouseData |= if buttons_pressed.contains(MouseButtons::BACK) {
-                            XBUTTON1
-                        } else {
-                            0
-                        } | if buttons_pressed.contains(MouseButtons::FORWARD) {
-                            XBUTTON2
-                        } else {
-                            0
-                        };
+                        first.Anonymous.mi.mouseData |=
+                            if buttons_pressed.contains(MouseButtons::BACK) {
+                                XBUTTON1
+                            } else {
+                                0
+                            } | if buttons_pressed.contains(MouseButtons::FORWARD) {
+                                XBUTTON2
+                            } else {
+                                0
+                            };
                     }
 
                     inputs.push(INPUT {
@@ -244,28 +259,30 @@ impl TargetServicer {
                 } else if !buttons_pressed.is_empty() {
                     unsafe {
                         first.Anonymous.mi.dwFlags |= MOUSEEVENTF_XDOWN;
-                        first.Anonymous.mi.mouseData |= if buttons_pressed.contains(MouseButtons::BACK) {
-                            XBUTTON1
-                        } else {
-                            0
-                        } | if buttons_pressed.contains(MouseButtons::FORWARD) {
-                            XBUTTON2
-                        } else {
-                            0
-                        };
+                        first.Anonymous.mi.mouseData |=
+                            if buttons_pressed.contains(MouseButtons::BACK) {
+                                XBUTTON1
+                            } else {
+                                0
+                            } | if buttons_pressed.contains(MouseButtons::FORWARD) {
+                                XBUTTON2
+                            } else {
+                                0
+                            };
                     }
                 } else if !buttons_released.is_empty() {
                     unsafe {
                         first.Anonymous.mi.dwFlags |= MOUSEEVENTF_XUP;
-                        first.Anonymous.mi.mouseData |= if buttons_released.contains(MouseButtons::BACK) {
-                            XBUTTON1
-                        } else {
-                            0
-                        } | if buttons_released.contains(MouseButtons::FORWARD) {
-                            XBUTTON2
-                        } else {
-                            0
-                        };
+                        first.Anonymous.mi.mouseData |=
+                            if buttons_released.contains(MouseButtons::BACK) {
+                                XBUTTON1
+                            } else {
+                                0
+                            } | if buttons_released.contains(MouseButtons::FORWARD) {
+                                XBUTTON2
+                            } else {
+                                0
+                            };
                     }
                 }
 
