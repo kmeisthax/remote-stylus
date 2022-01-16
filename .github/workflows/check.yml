@@ -21,7 +21,7 @@ jobs:
     needs: check_all
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest]
         rust_toolchain: [stable]
     runs-on: ${{matrix.os}}
     steps:
