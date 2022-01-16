@@ -20,6 +20,16 @@ jobs:
         with:
           command: fmt
           args: --all -- --check
+      - name: Check Clippy lints
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package libremotestylus -- -D warnings
+      - name: Build core library
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package libremotestylus
   
   check_windows:
     name: Check Windows client
