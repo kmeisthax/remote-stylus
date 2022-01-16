@@ -1,39 +1,48 @@
 name: check
 on: [push, pull_request]
 jobs:
-  check_all:
+  check_core:
+    name: Check core
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
         rust_toolchain: [stable]
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{matrix.rust_toolchain}}
-      - uses: actions-rs/cargo@v1
+      - name: Check formatting
+        uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
   
   check_windows:
-    needs: check_all
+    name: Check Windows client
+    needs: check_core
     strategy:
       matrix:
         os: [windows-latest]
         rust_toolchain: [stable]
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{matrix.rust_toolchain}}
-      - uses: actions-rs/cargo@v1
+      - name: Check Clippy lints
+        uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: --package remotestylus-windows -- -D warnings
-      - uses: actions-rs/cargo@v1
+      - name: Build Windows client
+        uses: actions-rs/cargo@v1
         with:
           command: build
           args: --package remotestylus-windows
