@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 mod event;
 
-pub use event::PointerEvent;
+pub use event::{MouseButtons, Point, PointerData, PointerEvent, StreamAction};
 
 /// Any message to be sent between event sources and targets.
 #[derive(Serialize, Deserialize)]

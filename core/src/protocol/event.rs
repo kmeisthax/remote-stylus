@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 /// Point coordinates are relative to the target display's physical pixel
 /// coordinates; e.g. a 2048x1536 display accepts points from (0,0) to
 /// (2048,1536) regardless of the pixel size of the input.
-#[derive(Serialize, Deserialize)]
-struct Point(u16, u16);
+#[derive(Serialize, Deserialize, Default, PartialEq, Eq)]
+pub struct Point(pub u16, pub u16);
 
 /// The type of pointing device.
 ///
@@ -58,8 +58,8 @@ bitflags! {
     /// depending on what kind of mouse is in use and if the user is left- or
     /// right-handed. Event sources must report buttons in this abstract way so
     /// that the source platform's chirality preference is taken into account.
-    #[derive(Serialize, Deserialize)]
-    struct MouseButtons: u8 {
+    #[derive(Serialize, Deserialize, Default)]
+    pub struct MouseButtons: u8 {
         /// The primary mouse button.
         ///
         /// For right-handed users, this is typically the left mouse button.
@@ -83,7 +83,7 @@ bitflags! {
 
 /// Auxiliary pointer data provided by a given type of pointing device.
 #[derive(Serialize, Deserialize)]
-enum PointerData {
+pub enum PointerData {
     /// Pointer data specific to `Mouse` pointers.
     Mouse {
         /// What buttons are currently pressed on the mouse.
@@ -109,7 +109,7 @@ impl From<PointerData> for PointerType {
 
 /// What action is being taken on the pointer event stream.
 #[derive(Serialize, Deserialize)]
-enum StreamAction {
+pub enum StreamAction {
     /// A new pointer was added to the event stream.
     ///
     /// The stream ID for this pointer event must not currently be in use by
@@ -144,7 +144,7 @@ enum StreamAction {
 #[derive(Serialize, Deserialize)]
 pub struct PointerEvent {
     /// What we're doing to the given pointer.
-    stream_action: StreamAction,
+    pub stream_action: StreamAction,
 
     /// The pointer event stream ID.
     ///
@@ -156,11 +156,11 @@ pub struct PointerEvent {
     /// inadvertent pointer type changes, stream IDs are specific to the type
     /// of pointer being reported on (e.g. finger #1 is not the same as stylus
     /// #1).
-    stream: u8,
+    pub stream: u8,
 
     /// The current location of the pointer.
-    location: Point,
+    pub location: Point,
 
     /// Any data specific to the pointing device.
-    data: PointerData,
+    pub data: PointerData,
 }

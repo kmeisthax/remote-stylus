@@ -371,6 +371,7 @@ dependencies = [
 name = "remotestylus-windows"
 version = "0.1.0"
 dependencies = [
+ "crossbeam-channel",
  "libremotestylus",
  "windows",
 ]
