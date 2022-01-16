@@ -56,3 +56,34 @@ jobs:
         with:
           command: build
           args: --package remotestylus-windows
+  
+  check_ipados:
+    name: Check iPadOS client
+    needs: check_core
+    strategy:
+      matrix:
+        os: [macos-latest]
+        rust_toolchain: [stable]
+        rust_target: [aarch64-apple-ios]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v2
+      - name: Install iPadOS toolchain
+        run: sudo xcode-select --install
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.rust_toolchain}}
+          target: ${{matrix.rust_target}}
+          override: true
+      - name: Check Clippy lints
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package remotestylus-ipados -- -D warnings
+      - name: Build iPadOS client
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package remotestylus-ipados
