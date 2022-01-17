@@ -79,9 +79,9 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --package remotestylus-ipados -- -D warnings
+          args: --package remotestylus-ipados --target=${{matrix.rust_target}} -- -D warnings
       - name: Build iPadOS client
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --package remotestylus-ipados
+          args: --package remotestylus-ipados --target=${{matrix.rust_target}}
