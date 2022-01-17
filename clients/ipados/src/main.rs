@@ -1,6 +1,5 @@
 use objc::rc::autoreleasepool;
-use objc::runtime::Class;
-use objc_foundation::NSString;
+use objc::runtime::{Class, Object};
 use std::env::args;
 use std::ffi::CString;
 use std::os::raw::{c_char, c_int};
@@ -13,14 +12,14 @@ extern "C" {
     fn UIApplicationMain(
         argc: c_int,
         argv: *const *const c_char,
-        principalClassName: *mut NSString,
-        delegateClassName: *mut NSString,
+        principalClassName: *const Object,
+        delegateClassName: *const Object,
     ) -> c_int;
 }
 
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {
-    fn NSStringFromClass(class: *mut Class) -> *const NSString;
+    fn NSStringFromClass(class: *const Class) -> *const Object;
 }
 
 fn main() {
@@ -33,13 +32,15 @@ fn main() {
         .collect::<Vec<*const c_char>>();
 
     autoreleasepool(|| {
-        let rsrs_app_delegate = appdelegate::decl_class();
+        let rsrs_app_delegate = appdelegate::def_class();
 
-        UIApplicationMain(
-            c_args.len() as c_int,
-            c_args.as_ptr(),
-            ptr::null(),
-            NSStringFromClass(rsrs_app_delegate),
-        );
+        unsafe {
+            UIApplicationMain(
+                c_args.len() as c_int,
+                c_args.as_ptr(),
+                ptr::null(),
+                NSStringFromClass(rsrs_app_delegate),
+            );
+        }
     });
 }

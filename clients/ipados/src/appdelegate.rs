@@ -1,33 +1,30 @@
 //! Remote stylus app delegate
 
 use objc::declare::ClassDecl;
-use objc::runtime::{BOOL, YES};
-use objc::Class;
-use objc_foundation::{NSDictionary, NSString};
-use objc_id::Id;
+use objc::runtime::{Class, Object, Sel, BOOL, YES};
+use objc::{class, sel, sel_impl};
 
-type UIApplicationLaunchOptionsKey = NSString;
-
-fn application_did_finish_launching_with_options(
-    app: *mut UIApplication,
-    launch_options: *mut NSDictionary<UIApplicationLaunchOptionsKey, Id>,
+extern "C" fn rsrs_app_delegate_application_did_finish_launching_with_options(
+    _this: &Object,
+    _cmd: Sel,
+    _app: *mut Object,            //UIApplication
+    _launch_options: *mut Object, //NSDictionary<UIApplicationLaunchOptionsKey, Id<Object>>,
 ) -> BOOL {
     YES
 }
 
 /// Define RSRSAppDelegate
-fn def_class() -> Class {
+pub fn def_class() -> &'static Class {
     let superclass = class!(UIApplicationDelegate);
     let mut decl = ClassDecl::new("RSRSAppDelegate", superclass).unwrap();
 
     unsafe {
         decl.add_method(
             sel!(application:didFinishLaunchingWithOptions:),
-            application_did_finish_launching_with_options,
+            rsrs_app_delegate_application_did_finish_launching_with_options
+                as extern "C" fn(&Object, Sel, *mut Object, *mut Object) -> BOOL,
         );
     }
 
-    decl.register();
-
-    decl
+    decl.register()
 }
