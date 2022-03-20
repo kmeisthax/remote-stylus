@@ -1,0 +1,36 @@
+// Secret credentials to make the Xcode project do it's signing magic for free
+// accounts.
+// 
+// Copy this file to identity.xcconfig and fill it out before launching the
+// Xcode project. That file is gitignored to avoid cluttering up Git history
+// with developers' individual code signing configuration.
+
+// The bundle ID for this app. Must be unique.
+// 
+// On a free account I found that I had to prefix this with the Team ID in order
+// for automatic signing to work.
+PRODUCT_BUNDLE_IDENTIFIER = com.example.remote-stylus
+
+// The development team for this app. Must correspond to the one on your Apple
+// ID.
+// 
+// If you don't know your team ID, and are on a free dev account, try the
+// following:
+// 
+// 1. Open Xcode, then go to Xcode -> Preferences in the menu bar
+// 2. Go to "Accounts" and make sure you have an Apple ID in there.
+// 3. Double click your personal team. If you don't have one, IDK, maybe try
+//    creating and compiling a blank/sample iOS project and hoping Xcode helps
+//    you, then check again.
+// 4. Make sure you have a certificate in your team that is on your local
+//    machine (i.e. not greyed-out). If you don't, generate one now with the
+//    plus at the bottom left. It needs to be an "Apple Development"
+//    certificate (or the iOS equivalent)
+// 5. Open Keychain Access.
+// 6. In the "My Certificates" tab look for a valid cert (one that says Apple
+//    Development). Right-click it and click "Get Info".
+// 7. Look for the "Organizational Unit" field; that is your team ID. The
+//    "Organization" below it is the name of your development team (in case you
+//    have multiple and don't want to, say, pollute your work team with
+//    personal stuff).
+DEVELOPMENT_TEAM = 1234567890

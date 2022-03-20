@@ -2,14 +2,38 @@
 
 ## Building
 
-Run the `build.sh` script. This will produce a `RemoteStylus.ipa` directory.
+Remote Stylus supports two build paths: Xcode automatic signing and Fastlane.
+Both require you to first build the project with `build.sh`.
 
-If you specify the SHA-1 or SHA-256 hash of your code signing certificate in
-`IDENTITY`, the script will also sign the bundle for you. Otherwise, you're on
-your own.
+Please note that if you have a free developer account, you will not be able to
+use the Fastlane signing path. The magic that Xcode (and, for that matter,
+AltStore) does to sign binaries without a valid team is not available in
+Fastlane.
 
-To get the SHA hash of a valid code signing certificate, run the following
-command:
+### Xcode
+
+The Xcode project has automatic signing and provisioning enabled; which will
+allow the installation of the app on a device. Note that it does not invoke
+cargo for you at this time, you need to build the binary first with the script
+and then build the project with Xcode.
+
+You will also need to fill out an `identity.xcconfig` file with the variables
+listed in `identity.sample`. If you are on a free dev account your bundle ID
+needs to have your team ID in it too.
+
+### Fastlane
+
+If you specify `fastlane` as the first argument to `build.sh`, then we will
+build a `RemoteStylus.ipa` that is properly signed with the code signing
+identity listed in the `IDENTITY` variable.
+
+NOTE: This is still a work in progress as I do not have a paid dev account at
+this time.
+
+## Codesigning identity tips
+
+To get the SHA hash of a valid code signing certificate that you have already
+obtained, run the following command:
 
 ```
 security find-identity -pcodesigning -v
