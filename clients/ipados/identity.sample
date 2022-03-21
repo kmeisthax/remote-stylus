@@ -9,7 +9,7 @@
 // 
 // On a free account I found that I had to prefix this with the Team ID in order
 // for automatic signing to work.
-PRODUCT_BUNDLE_IDENTIFIER = com.example.remote-stylus
+ROOT_BUNDLE_IDENTIFIER = com.example.remote-stylus
 
 // The development team for this app. Must correspond to the one on your Apple
 // ID.
