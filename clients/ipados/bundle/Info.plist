@@ -8,8 +8,11 @@
         <string>RemoteStylus</string>
         <key>CFBundleExecutable</key>
         <string>remotestylus-ipados</string>
+        <!--
+            TODO: Non-xcode builds need this.
         <key>CFBundleIdentifier</key>
         <string>org.fantranslation.code.remote-stylus</string>
+        -->
         <key>CFBundleInfoDictionaryVersion</key>
         <string>6.0</string>
         <key>CFBundlePackageType</key>
