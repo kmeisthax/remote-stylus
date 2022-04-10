@@ -6,6 +6,8 @@ use std::os::raw::{c_char, c_int};
 use std::ptr;
 
 mod appdelegate;
+mod appscenedelegate;
+mod remoteviewcontroller;
 mod stylusview;
 
 #[link(name = "UIKit", kind = "framework")]
@@ -34,7 +36,9 @@ fn main() {
 
     autoreleasepool(|| {
         let rsrs_app_delegate = appdelegate::def_class();
-        let rsrs_stylus_capture_view = stylusview::def_class();
+        stylusview::def_class();
+        remoteviewcontroller::def_class();
+        appscenedelegate::def_class();
 
         unsafe {
             UIApplicationMain(
