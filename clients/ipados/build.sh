@@ -2,7 +2,7 @@
 
 # Build steps for iOS, because I hate Xcode.
 
-cargo build --target aarch64-apple-ios
+IPHONEOS_DEPLOYMENT_TARGET=15.3 cargo build --target aarch64-apple-ios
 
 #todo: lipo, I would have done it here but I can't actually install the
 #old toolchains with rustup

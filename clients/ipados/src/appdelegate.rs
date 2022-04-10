@@ -1,8 +1,8 @@
 //! Remote stylus app delegate
 
 use objc::declare::ClassDecl;
-use objc::runtime::{Class, Object, Sel, BOOL, YES, NO};
-use objc::{class, sel, sel_impl, msg_send};
+use objc::runtime::{Class, Object, Sel, BOOL, NO, YES};
+use objc::{class, msg_send, sel, sel_impl};
 use std::ffi::c_void;
 
 extern "C" fn rsrs_app_delegate_application_did_finish_launching_with_options(
@@ -33,9 +33,9 @@ extern "C" {
 extern "C" fn rsrs_app_delegate_application_configuration_for_connecting_scene_session_options(
     _this: &Object,
     _cmd: Sel,
-    _app: *mut Object,            //UIApplication
-    _scene_session: *mut Object,  //UISceneSession
-    _options: *mut Object,        //UISceneConnectionOptions
+    _app: *mut Object,           //UIApplication
+    _scene_session: *mut Object, //UISceneSession
+    _options: *mut Object,       //UISceneConnectionOptions
 ) -> *mut Object //UISceneConfiguration
 {
     let scene_cfg_cls = class!(UISceneConfiguration);
@@ -45,9 +45,17 @@ extern "C" fn rsrs_app_delegate_application_configuration_for_connecting_scene_s
     let len = DEFAULT_SCENE_CFG_NAME.len();
 
     let config_name: *mut Object = unsafe { msg_send![string_cls, alloc] };
-    let config_name: *mut Object = unsafe { msg_send![config_name, initWithBytes:bytes length:len encoding:UTF8_ENCODING ] };
+    let config_name: *mut Object =
+        unsafe { msg_send![config_name, initWithBytes:bytes length:len encoding:UTF8_ENCODING ] };
 
-    let scene_cfg = unsafe { msg_send![scene_cfg_cls, configurationWithName:config_name sessionRole: UIWindowSceneSessionRoleApplication] };
+    let scene_cfg: *mut Object = unsafe {
+        msg_send![scene_cfg_cls, configurationWithName:config_name sessionRole: UIWindowSceneSessionRoleApplication]
+    };
+
+    unsafe {
+        let _: () = msg_send![scene_cfg, setSceneClass: class!(UIWindowScene)];
+        let _: () = msg_send![scene_cfg, setDelegateClass: class!(RSRSAppSceneDelegate)];
+    }
 
     scene_cfg
 }
@@ -66,7 +74,13 @@ pub fn def_class() -> &'static Class {
         decl.add_method(
             sel!(application:configurationForConnectingSceneSession:options:),
             rsrs_app_delegate_application_configuration_for_connecting_scene_session_options
-                as extern "C" fn(&Object, Sel, *mut Object, *mut Object, *mut Object) -> *mut Object,
+                as extern "C" fn(
+                    &Object,
+                    Sel,
+                    *mut Object,
+                    *mut Object,
+                    *mut Object,
+                ) -> *mut Object,
         );
     }
 
